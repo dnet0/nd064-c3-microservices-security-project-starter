@@ -1,0 +1,51 @@
+Docker Threat Modeling
+
+1. S (Spoofing):
+ Threat: Impersonation using the Docker socket without authentication
+ Description: Any process with access to /var/run/docker.sock can impersonate an administrator and control the Docker daemon. 
+ This allows full management of all containers on the host without identity verification
+2. T (Tampering):
+ Threat: Manipulation of container images through untrusted or unsigned registries
+ Description: Images are pulled without signature verification, allowing attackers to tamper with them during transit. 
+ This can result in deploying malicious or backdoored containers
+3. I (Information Disclosure):
+ Threat: Exposure of database credentials stored as plain-text environment variables
+ Description: Credentials stored in environment variables can be accessed from inside containers or via docker inspect. 
+ This exposes sensitive information to anyone with container or Docker access
+4. D (Denial of Service):
+ Threat: Denial of service through memory/CPU exhaustion from exploited container
+ Description: Without resource limits, a compromised container can consume all host resources. 
+ This can crash critical services and disrupt the entire system
+5. E (Elevation of Privilege):
+ Threat: Full host compromise through privileged container execution or Docker socket mount
+ Description: Privileged containers or Docker socket access allow attackers to escape to the host. 
+ This grants full control over the system and all running workloads
+
+Kubernetes Threat Modeling
+
+1. S (Spoofing):
+ Threat: Impersonation of legitimate pods across namespaces
+ Description: Without NetworkPolicies, any pod can communicate freely and impersonate trusted services. 
+ This allows injection of fake data and misleading monitoring results
+2. T (Tampering):
+ Threat: Tampering with observability data in Prometheus and Grafana
+ Description: An attacker can modify metrics, alerts, or dashboards after compromising vuln_app. 
+ This hides malicious activity and prevents detection
+3. R (Repudiation):
+ Threat: Inability to reconstruct attacker actions due to missing audit logs
+ Description: Without audit logging, actions on the cluster are not recorded. 
+ This prevents tracing or proving malicious activity after an incident
+4. I (Information Disclosure):
+ Threat: Sensitive data exfiltration from the database via vuln_app
+ Description: An exposed vulnerable application allows attackers to access and extract database data. 
+ Lack of network restrictions enables exfiltration to the Internet
+5. E (Elevation of Privilege):
+ Threat: Privilege escalation via over-permissioned Service Account token
+ Description: A compromised pod can use its Service Account token to access the Kubernetes API. 
+ If permissions are excessive, this allows full cluster takeover
+
+Docker-bench Run Results and Analysis
+From the failed findings, select and document 3 findings from the Docker-bench results that you want to harden based on the 5 attack surface areas you identified in Step 1. At least 1 of the 3 hardened findings should be different from the ones mentioned in the exercise (i.e. 5.10, 5.14, and 5.22).
+4.5 Ensure Content trust for Docker is Enabled (Manual)
+5.11 Ensure that the memory usage for container is limited (Manual)
+2.7 Ensure TLS authentication for Docker daemon is configured (Manual)

@@ -1,0 +1,22 @@
+How will we test the changes?
+
+To test the changes, we will use a combination of automated and manual testing methods.
+First, all hardening steps will be applied to a staging environment that mirrors
+production. We will use kube-bench to run CIS benchmark checks before and after each
+change, comparing results to confirm that targeted checks move from FAIL to PASS.
+Functional tests will be performed using kubectl to verify that pods, services, and
+deployments continue to operate as expected. We will also run integration tests to
+validate communication between services, and use Helm to manage test application
+deployments. Prometheus and Grafana will be used to monitor resource usage and
+performance metrics throughout the testing phase
+
+How will we ensure the changes don't negatively affect the cluster?
+
+To ensure that hardening changes do not negatively impact the cluster, we will apply
+changes incrementally and monitor cluster health after each step. Load and performance
+tests will simulate real traffic to identify any degradation in response times, CPU,
+or memory usage. Health checks and readiness probes will confirm that all services
+recover correctly after configuration changes. Etcd snapshots will be taken before
+any change is applied, providing a reliable rollback point if instability is detected.
+Finally, audit logs and cluster event logs will be reviewed after each change to catch
+any unexpected access denials or errors introduced by the hardening steps

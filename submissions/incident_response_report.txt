@@ -1,0 +1,32 @@
+1. Incident commander name:
+Johan Salvatierra
+
+2. Executive Summary of what happened:
+On April 9, 2026, Falco runtime security detected the deployment of unauthorized 
+cryptocurrency mining containers on our Kubernetes cluster. Three suspicious workloads 
+(moneropool, minergate, and cryptotonight) were instantiated using legacy Docker images 
+from servethehome, which are known to run Monero CPU mining software.
+
+3. Summary of what was affected:
+The Kubernetes cluster was directly affected, with three pods consuming CPU resources 
+for cryptocurrency mining. The affected workloads used unverified, legacy Docker images 
+without a software bill of materials (SBOM), increasing the risk of additional 
+vulnerabilities being present in the cluster environment.
+
+4. Summary of the impact:
+The unauthorized mining workloads consumed significant CPU resources, degrading cluster 
+performance and increasing operational costs. Additionally, the images used unencrypted 
+communication channels, exposing the cluster to potential data interception and 
+representing a serious breach of our security policies.
+
+5. Summary of the remediation steps:
+The malicious pods were immediately terminated using kubectl delete pod to stop the 
+unauthorized resource consumption. A full audit of the cluster was conducted to ensure 
+no additional unauthorized workloads were running, and RBAC policies were reviewed and 
+tightened to prevent unauthorized pod deployments in the future.
+
+6. Summary of lessons learned:
+Runtime security monitoring with tools like Falco is essential for detecting suspicious 
+workloads in real time before they cause significant damage. Going forward, we will 
+implement stricter admission control policies using tools such as OPA Gatekeeper to 
+prevent unauthorized or unverified images from being deployed to the cluster
